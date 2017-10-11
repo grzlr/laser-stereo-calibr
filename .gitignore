@@ -1,0 +1,4 @@
+# excluding the figure and data folders
+
+/figures/
+/data/
