@@ -1,0 +1,3 @@
+% read in the points saved by the cursor
+img_pts = [p1.Position', p2.Position', p3.Position', p4.Position', p5.Position', ...
+    p6.Position', p7.Position', p8.Position', p9.Position', p10.Position'];

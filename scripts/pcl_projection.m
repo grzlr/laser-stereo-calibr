@@ -1,55 +1,55 @@
-clear;
-
-% opening the manually selected 3D-2D correspondences
-load ('../data/points.mat');
+function [pcl5, rep_error, size_pcl, rep_image_pixels] = pcl_projection(pcl_path, R, t, K, world_points_raw, image_points, origin, baseline)
 
 % opening the point cloud file
-fid = fopen('../data/pcl_raw.pcd');
+cd(pcl_path);
+fid = fopen('pcl_raw.pcd');
 
-% skipping the first 11 lines that make up the header of .ply or .pcd file
-for i = 1 : 11
+% skipping the first 11/13 lines that make up the header of .ply or .pcd file
+for i = 1 : 13
     tline = fgets(fid);
 end
+
 % reading the points
-pcl_down = fscanf(fid, '%f', [3, Inf]);
-size_pcl = size(pcl_down, 2);
-
-% rotation and translation matrices received from the solver
-R = [-0.85682262, -0.51557884, -0.00578405; -0.06444674, 0.11821822, -0.99089408; 0.5115678, -0.8486477, -0.13451942];
-t = [-0.19138781; 0.0181162; -0.07892774];
-
-% camera instrinsics
-fx = 1399.53;
-fy = fx;
-cx = 1169.16;
-cy = 703.221;
-K = [fx 0 cx; 0 fy cy; 0 0 1];
-baseline = 0.120;
+pcl_raw = fscanf(fid, '%f', [3, Inf]);
+size_pcl = size(pcl_raw, 2);
 
 % constructing the transformation matrix
-T = [R, t; 0 0 0 1];
+T = [R t; 0 0 0 1];
+
+% extracting focal length - assuming fx = fy
+focal_length = K(1);
 
 % inverting the transformation matrix for other operations
-T_inv = [R', -R' * t; 0 0 0 1];
+% T_inv = [R' -R' * t; 0 0 0 1];
 
 % transposing and homogenising the world_points matrix
-world_points = [world_points'; ones(1, size(world_points, 1))];
-pcl1 = [pcl_down; ones(1, size_pcl)];
+world_points_raw = [world_points_raw'; ones(1, size(world_points_raw, 1))];
+pcl1 = [pcl_raw; ones(1, size_pcl)];
 
 % subtracting the origin from the world_points
-world_points(1:3, :) = world_points(1:3, :) - origin';
+world_points_raw(1:3, :) = world_points_raw(1:3, :) - origin';
+world_points = world_points_raw;
 pcl1(1:3, :) = pcl1(1:3, :) - origin';
 
 % transposing and homogenising the image_points matrix
 image_pixels = [image_points'; ones(1, size(image_points, 1))];
 
-% calculating the points w.r.t camera origin
-camera_points = T * world_points;
+% transforming the 3D laser points to the camera origin
+world_points_transformed = T * world_points;
 pcl2 = T * pcl1;
-% disp_mat = (fx * baseline) / 
 
-% projecting camera_points to 2D image points using K
-im_pixels = K * camera_points(1:3, :);
+% calculating disparity values for each pixel
+disp = zeros(1, size_pcl);
+for i = 1 : size_pcl
+    disp(i) = (focal_length * baseline) / pcl2(3, i);    
+end
+
+% for i = 1 : size(im_pixels, 2)
+%     disp = [disp, ((focal_length * baseline) / camera_points(3, i))];
+% end
+
+% projecting transformed 3D laser points to 2D image points using K
+im_pixels = K * world_points_transformed(1:3, :);
 pcl3 = K * pcl2(1:3, :);
 
 % empty reprojection matrix
@@ -69,6 +69,12 @@ rep_image_pixels = round(rep_image_pixels);
 pcl5 = round(pcl4);
 
 % calculating reprojection error
-error = rep_image_pixels(1:2,:) - image_pixels(1:2,:);
+rep_error = rep_image_pixels(1:2,:) - image_pixels(1:2,:);
 
-pcl6 = [pcl5, rep_image_pixels];
+% replacing third row with disparity values
+pcl5(3,:) = disp;
+
+% combining the point cloud with the ground truth points
+% pcl6 = [pcl5, rep_image_pixels];
+
+end
