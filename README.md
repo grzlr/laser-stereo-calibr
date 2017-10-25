@@ -20,6 +20,3 @@
 4. Point Cloud Files folder
 	- where the point cloud file is stored
 
-### To Do Fixes
-	- image file path is hardcoded
-	- scripts for generating the text data files need to be finished
