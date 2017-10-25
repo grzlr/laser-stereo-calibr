@@ -1,11 +1,11 @@
 % this is the main function that loads the data and calls the associated
 % functions
 % set flag = 1/2/3 for different plots
+plot_flag = 3;
 % set path = 1 for the fixed hardcoded path or 0 for selecting folders manually
+path_flag = 2;
 
-function [] = main(flag, path)
-
-if path == 0
+if path_flag == 0
     data_path = uigetdir('', 'select data parameters folder');
     source_path = uigetdir('', 'select source code folder');
     pcl_file = uigetfile({'*.pcd'; '*.ply'}, 'select point cloud data file');    
@@ -13,7 +13,7 @@ if path == 0
     image_file = uigetfile({'*.png'; '*.jpg'}, 'select the image file');
     image_dir = uigetdir('', 'select the image folder');
 
-else
+elseif path_flag == 1
     data_path = '/home/rohit/code/calibration_workspace/data/test/';
     source_path = '/home/rohit/code/calibration_workspace/src/';
     pcl_file = uigetfile({'*.pcd'; '*.ply'}, 'select point cloud data file');    
@@ -21,6 +21,14 @@ else
     image_file = uigetfile({'*.png'; '*.jpg'}, 'select the image file');
     image_dir = uigetdir('', 'select the image folder');
 
+else
+    data_path = '/media/rohit/Data/dataset_dumps/stereo_dataset/zed/scene1/1/points/';
+    source_path = '/home/rohit/code/calibration_workspace/src/';
+    pcl_file = 'scene1_dense_p1.ply';    
+    pcl_dir = '/home/rohit/Desktop/dataset-drafts/scene1/';
+    image_file = '1_f08_rect_left.png';
+    image_dir = '/media/rohit/Data/dataset_dumps/stereo_dataset/zed/scene1/1/rect/selected/';
+    
 end
 
 % combining directory and file paths for the pcl and image files
@@ -40,11 +48,21 @@ pcl_path = fullfile(pcl_dir, pcl_file);
 % generate a disparity image
 [disparity_image] = disparity_gen(pcl_disp);
 
-% plot 
-plot_tool(data_path, pcl_path, image_path, pcl_disp, image_points, rep_image_pixels, disparity_image, flag);
-
-cd(source_path);
-fprintf('the projection error for gt points is \n');
-disp(rep_error);
+% superimposing the projected point cloud points over the camera image
+if plot_flag == 1
+    plot_pcl(image_path, pcl_disp);
+   
+% showing the error between projected gt points and selected image points    
+elseif plot_flag == 2
+   plot_error(image_path, image_points, rep_image_pixels);
+              
+% plotting disparity superimposed on the the camera image              
+elseif plot_flag == 3
+   plot_disp(image_path, disparity_image);
 
 end
+
+cd(source_path);
+
+fprintf('the projection error for gt points is \n');
+disp(rep_error);

@@ -6,7 +6,7 @@ pcl_crop = [];
 j = 1;
 
 for i = 1 : size_pcl
-    if pcl_pixels(1, i) <= 2208 && pcl_pixels(2, i) <= 1242 && pcl_pixels(2, i) > 0
+    if pcl_pixels(1, i) <= 2208 && pcl_pixels(2, i) <= 1242 && pcl_pixels(1, i) > 0 && pcl_pixels(2, i) > 0
         pcl_crop(:, j) = pcl_pixels(:, i);
         j = j + 1;
     end
