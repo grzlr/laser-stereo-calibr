@@ -1,19 +1,24 @@
 % this is the main function that loads the data and calls the associated
 % functions
+% set flag = 1/2/3
+% path = 1 for the fixed hardcoded path or 0 for selecting folders manually
 
-function [] = main(flag)
+function [] = main(flag, path)
 
-% data_path = uigetdir('/home/rohit/', 'select data parameters folder path');
-% script_path = uigetdir('/home/rohit/', 'select scripts folder path');
-% pcl_path = uigetdir('/home/rohit/', 'select point cloud data folder path');
-% image_path = uigetdir('/home/rohit/', 'select the stereo image folder path');
+if path == 0
+    data_path = uigetdir('', 'select data parameters folder path');
+    script_path = uigetdir('', 'select scripts folder path');
+    pcl_path = uigetdir('', 'select point cloud data folder path');
+    image_path = uigetdir('', 'select the image folder for comparison');
 
+else
+    data_path = '/home/rohit/code/calibration_workspace/data/test/';
+    script_path = '/home/rohit/code/calibration_workspace/scripts/';
+    pcl_path = uigetdir('', 'select point cloud data folder path');
+    image_path = uigetdir('', 'select the image folder for comparison');
 
-data_path = '/home/rohit/code/calibration_workspace/data/test/';
-script_path = '/home/rohit/code/calibration_workspace/scripts/';
-pcl_path = '/home/rohit/code/calibration_workspace/data/day-0/';
-image_path = '/home/rohit/code/calibration_workspace/data/day-0/';
-
+end
+    
 % reading the files
 [R, t, K, world_points_raw, image_points, origin, baseline] = read_files(data_path);
 
@@ -31,5 +36,6 @@ image_path = '/home/rohit/code/calibration_workspace/data/day-0/';
 plot_tool(data_path, pcl_path, image_path, pcl_disp, image_points, rep_image_pixels, disparity_image, flag);
 
 cd(script_path);
+print(rep_error);
 
 end
