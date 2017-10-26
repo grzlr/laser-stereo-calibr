@@ -76,4 +76,6 @@ pcl5(3,:) = disp;
 % combining the point cloud with the ground truth points
 % pcl6 = [pcl5, rep_image_pixels];
 
+fclose(fid);
+
 end

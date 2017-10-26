@@ -3,36 +3,43 @@ function [R, t, K, world_points_raw, image_points, origin, baseline] = read_file
 cd(data_path);
 
 % read rotation matrix
-fid1 = fopen('rotation_matrix.txt');
-R = fscanf(fid1, '%f', [3, Inf]);
+fid = fopen('rotation_matrix.txt');
+R = fscanf(fid, '%f', [3, Inf]);
 R = R';
+fclose(fid);
 
 % read translation matrix
-fid2 = fopen('translation_matrix.txt');
-t = fscanf(fid2, '%f', [3, Inf]);
+fid = fopen('translation_matrix.txt');
+t = fscanf(fid, '%f', [3, Inf]);
+fclose(fid);
 
 % read camera intrinsic matrix
-fid3 = fopen('camera_matrix.txt');
-K = fscanf(fid3, '%f', [3, Inf]);
+fid = fopen('camera_matrix.txt');
+K = fscanf(fid, '%f', [3, Inf]);
 K = K';
+fclose(fid);
 
 % read world points matrix
-fid4 = fopen('world_points_raw.txt');
-world_points_raw = fscanf(fid4, '%f', [3, Inf]);
+fid = fopen('world_points_raw.txt');
+world_points_raw = fscanf(fid, '%f', [3, Inf]);
 world_points_raw = world_points_raw';
+fclose(fid);
 
 % read image points matrix
-fid5 = fopen('image_points.txt');
-image_points = fscanf(fid5, '%f', [2, Inf]);
+fid = fopen('image_points.txt');
+image_points = fscanf(fid, '%f', [2, Inf]);
 image_points = image_points';
+fclose(fid);
 
 % read origin
-fid6 = fopen('origin.txt');
-origin = fscanf(fid6, '%f', [3, Inf]);
+fid = fopen('origin.txt');
+origin = fscanf(fid, '%f', [3, Inf]);
 origin = origin';
+fclose(fid);
 
 % read baseline
-fid7 = fopen('baseline.txt');
-baseline = fscanf(fid7, '%f', [1, Inf]);
+fid = fopen('baseline.txt');
+baseline = fscanf(fid, '%f', [1, Inf]);
+fclose(fid);
 
 end
