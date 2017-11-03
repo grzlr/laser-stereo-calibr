@@ -1,34 +1,25 @@
-% this is the main function that loads the data and calls the associated
+% The main script that loads the data and calls the associated
 % functions
-% set flag = 1/2/3/4 for different plots
-plot_flag = 3;
+
+%% Setting flags and obtaining directory paths
+
+% set flag = 0/1/2/3/4 for different plots
+plot_flag = 0;
+
 % set path = 1 for the fixed hardcoded path or 0 for selecting folders manually
 path_flag = 1;
 
-if path_flag == 0
-    data_path = uigetdir('', 'select data parameters folder');
-    source_path = uigetdir('', 'select source code folder');
-    [pcl_file, pcl_dir] = uigetfile({'*.pcd'; '*.ply'}, 'select point cloud data file');
-    [image_file, image_dir] = uigetfile({'*.png'; '*.jpg'}, 'select the image file');
-   
-% hardcoded option
-else 
-    data_path = '/media/rohit/Data/dataset_dumps/stereo_dataset/zed/scene1/2/points/';
-    source_path = '/home/rohit/code/calibration_workspace/src/';
-    pcl_file = 'scene1_dense_p1.ply';    
-    pcl_dir = '/home/rohit/Desktop/dataset-drafts/scene1/';
-    [image_file, image_dir] = uigetfile({'*.png'; '*.jpg'}, 'select the image file');
+% set write = 1 if you want to save the disparity image and range 
+write_flag = 0;
 
- 
-end
+%% obtaining paths
+[data_path, source_path, pcl_path, image_path] = get_path(path_flag);
 
-% combining directory and file paths for the pcl and image files
-image_path = fullfile(image_dir, image_file);
-pcl_path = fullfile(pcl_dir, pcl_file);
-    
+%% reading files
 % reading the files
 [R, t, K, world_points_raw, image_points, origin, baseline] = read_files(data_path);
 
+%% projections and disparity computation
 % calculating the projections and reprojection error for the correspondence
 % points
 [pcl_pixels, rep_error, size_pcl, rep_image_pixels] = pcl_projection(pcl_path, R, t, K, world_points_raw, image_points, origin, baseline);
@@ -37,8 +28,9 @@ pcl_path = fullfile(pcl_dir, pcl_file);
 [pcl_disp] = crop_image(size_pcl, pcl_pixels); 
 
 % generate a disparity image
-[disparity_image] = disparity_gen(pcl_disp);
+[disparity_image, disp_range] = disparity_gen(pcl_disp);
 
+%% plotting tools
 % superimposing the projected point cloud points over the camera image
 if plot_flag == 1
    plot_pcl(image_path, pcl_disp);
@@ -53,10 +45,24 @@ elseif plot_flag == 3
 
 elseif plot_flag == 4
     plot_tool(disparity_image);
+
+elseif plot_flag == 0
+    disp('no plotting selected');
     
 end
 
+%% writing to files
+if (write_flag == 1)
+    cd(data_path);
+    
+    % writing disparity range
+    dlmwrite('disparity_range.txt', disp_range);
 
+    % writing disparity image
+    dlmwrite('disparity_image.txt', disparity_image);
+
+end
+%% wrapping up
 cd(source_path);
 
 fprintf('the projection error for gt points is \n');
