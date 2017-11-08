@@ -1,4 +1,5 @@
-function [pcl5, rep_error, size_pcl, rep_image_pixels] = pcl_projection(pcl_path, R, t, K, world_points_raw, image_points, origin, baseline)
+function [pcl5, rep_error, size_pcl, rep_image_pixels] = pcl_projection(pcl_path, R, t, ...
+    K, world_points_raw, image_points, origin, baseline)
 
 % opening the point cloud file
 fid = fopen(pcl_path);

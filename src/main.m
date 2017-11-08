@@ -4,13 +4,20 @@
 %% Setting flags and obtaining directory paths
 
 % set flag = 0/1/2/3/4 for different plots
-plot_flag = 0;
+plot_flag = 4;
 
 % set path = 1 for the fixed hardcoded path or 0 for selecting folders manually
 path_flag = 1;
 
 % set write = 1 if you want to save the disparity image and range 
 write_flag = 0;
+
+% output disparity image resolutions --> 2.2K 1080p 720p WVGA
+% Reference: https://www.stereolabs.com/zed/specs/
+output_resolution = [2208 1242; 1920 1080; 1280 720; 672 376];
+
+% resolution flag 1/2/3/4 --> 2.2K/1080p/720p/WVGA
+res_flag = 3;
 
 %% obtaining paths
 [data_path, source_path, pcl_path, image_path] = get_path(path_flag);
@@ -25,10 +32,10 @@ write_flag = 0;
 [pcl_pixels, rep_error, size_pcl, rep_image_pixels] = pcl_projection(pcl_path, R, t, K, world_points_raw, image_points, origin, baseline);
 
 % cropping point cloud disparity output to the camera FOV
-[pcl_disp] = crop_image(size_pcl, pcl_pixels); 
+[pcl_disp] = crop_image(size_pcl, pcl_pixels, output_resolution(res_flag, :)); 
 
 % generate a disparity image
-[disparity_image, disp_range] = disparity_gen(pcl_disp);
+[disparity_image, disp_range] = disparity_gen(pcl_disp, output_resolution(res_flag, :));
 
 %% plotting tools
 % superimposing the projected point cloud points over the camera image
@@ -43,6 +50,7 @@ elseif plot_flag == 2
 elseif plot_flag == 3
    plot_disp(image_path, disparity_image);
 
+% plotting only disparity
 elseif plot_flag == 4
     plot_tool(disparity_image);
 
