@@ -1,6 +1,6 @@
 
 % hardcoding
-fid = fopen('/media/rohit/Data/dataset_dumps/stereo_dataset/zed/scene1/3/points/world.txt');
+fid = fopen('/media/rohit/Data/dataset_dumps/stereo_dataset/zed/scene1/7/points/world.txt');
 
 % [file_name, path_name] = uigetfile('*.*', 'specify file');
 % file_path = fullfile(path_name, file_name);

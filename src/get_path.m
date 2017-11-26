@@ -10,7 +10,7 @@ if path_flag == 0
    
 % hardcoded option
 else 
-    data_path = '/media/rohit/Data/dataset_dumps/stereo_dataset/zed/scene1/1/points/';
+    data_path = '/media/rohit/Data/dataset_dumps/stereo_dataset/zed/scene1/7/points/';
     source_path = '/home/rohit/code/calibration_workspace/src/';
     pcl_file = 'scene1_dense_p1.ply';    
     pcl_dir = '/home/rohit/Desktop/dataset-drafts/scene1/';

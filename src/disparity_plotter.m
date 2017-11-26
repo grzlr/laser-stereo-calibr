@@ -9,7 +9,7 @@ output_resolution = [2208 1242; 1920 1080; 1280 720; 672 376];
 res_flag = 1;
 
 % read disparity matrix from text
-fid = fopen('../data/disp-files/disparity.txt');
+fid = fopen('../data/disp-files/disparity_int.txt');
 
 disp = fscanf(fid, '%f', output_resolution(res_flag, :));
 disp = disp';
@@ -17,7 +17,7 @@ disp = disp';
 fclose(fid);
 
 figure
-h2 = imshow(disp, 'DisplayRange', [0 300]);
+h2 = imshow(disp, 'DisplayRange', [0 255]);
 % set(h2, 'AlphaData', 0.5);
 
 % calculating the disparity range

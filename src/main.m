@@ -17,7 +17,7 @@ write_flag = 0;
 output_resolution = [2208 1242; 1920 1080; 1280 720; 672 376];
 
 % resolution flag 1/2/3/4 --> 2.2K/1080p/720p/WVGA
-res_flag = 3;
+res_flag = 1;
 
 %% obtaining paths
 [data_path, source_path, pcl_path, image_path] = get_path(path_flag);
@@ -65,13 +65,15 @@ if (write_flag == 1)
     
     % writing disparity range
     dlmwrite('disparity_range.txt', disp_range);
-
+    fprintf('saved disparity_range.txt \n');
+    
     % writing disparity image
     dlmwrite('disparity_image.txt', disparity_image);
+    fprintf('saved disparity_image.txt \n');
 
 end
 %% wrapping up
 cd(source_path);
 
-fprintf('the projection error for gt points is \n');
-disp(rep_error);
+% fprintf('the projection error for gt points is \n');
+% disp(rep_error);
